@@ -14,7 +14,7 @@ Google Analytics is a great tool, but requires some technical capabilities to un
 although important, data from Google Analytics (using the Google Analytics export API) and displays the information
 on the frontend of your blog/site to WP administrators.  The data provided by this plugin is:  
 
-*   Visits  
+*   Pageviews  
 *   Average Time On Page  
 *   Bounce Rate
 *   Exit Rate
