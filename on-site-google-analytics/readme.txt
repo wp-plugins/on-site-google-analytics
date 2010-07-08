@@ -52,6 +52,7 @@ First enter your username and password and then click out of the password box an
 2. This screenshot shows the On Site Google Analytics toolbar with the keywords active
 
 == Upgrade Notice ==
+add section
 
 
 == Changelog ==
