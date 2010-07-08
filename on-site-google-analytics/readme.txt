@@ -51,6 +51,9 @@ First enter your username and password and then click out of the password box an
 1. This screenshot shows the On Site Google Analytics toolbar with the referring sites active
 2. This screenshot shows the On Site Google Analytics toolbar with the keywords active
 
+== Upgrade Notice ==
+
+
 == Changelog ==
 
 = 0.10 =
