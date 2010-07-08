@@ -1,7 +1,7 @@
 <?php
 /* 
 Plugin Name: Seoatl On Site Google Analytics
-Plugin URI: http://www.seoatl.com/tools/wordpress/on-site-ga-plugin
+Plugin URI: http://www.seoatl.com/tools/wordpress/on-site-google-analytics-plugin
 Version: v0.1
 Author: <a href="http://twitter.com/seoatl">James Charlesworth</a>
 Description: A Google Analytics plugin for viewing GA on your website.
