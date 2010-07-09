@@ -18,6 +18,7 @@ font-size:12px;
 line-height:12px;
 }
 
+div#onsite-ga-plugin li {margin:0;line-height:14px;font-size:10px;}
 div#onsite-ga-plugin div.onsite-ga-referring-sites a {color:#0066CC}
 
 div#onsite-ga-plugin-inner img {border:none;}
