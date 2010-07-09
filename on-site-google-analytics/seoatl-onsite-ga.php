@@ -113,6 +113,7 @@ if (!class_exists("SeoatlOnSiteGa")) {
                         <select id="seoatlGaProfileId" name="seoatlGaProfileId">
                             <option value=""></option>
                         </select>
+                        <img id="profile_loader" style="display:none;" src="<?php bloginfo('wpurl') ?>/wp-content/plugins/seoatl-onsite-ga/images/admin-loader.gif" />
 
                         <br /><br />
                        <label for="seoatlGaProfileId">Date Range:</label>
@@ -132,12 +133,17 @@ if (!class_exists("SeoatlOnSiteGa")) {
                          <script type="text/javascript">
                           
                             jQuery("#seoatlGaPassword").bind("blur",function(){
-                             
-                               jQuery("#seoatlGaProfileId").load("<?php bloginfo('wpurl') ?>/wp-content/plugins/seoatl-onsite-ga/php/ga-profile-ajax.php",{'username': jQuery("#seoatlGaUsername").val(),'password': jQuery("#seoatlGaPassword").val()});
+                                jQuery("#profile_loader").css("display","inline");
+                               jQuery("#seoatlGaProfileId").load("<?php bloginfo('wpurl') ?>/wp-content/plugins/seoatl-onsite-ga/php/ga-profile-ajax.php",{'username': jQuery("#seoatlGaUsername").val(),'password': jQuery("#seoatlGaPassword").val()}, function(){
+                                  jQuery("#profile_loader").css("display","none");
+                               });
                             })
 
                             jQuery(document).ready(function(){
-                                jQuery("#seoatlGaProfileId").load("<?php bloginfo('wpurl') ?>/wp-content/plugins/seoatl-onsite-ga/php/ga-profile-ajax.php",{'username': jQuery("#seoatlGaUsername").val(),'password': jQuery("#seoatlGaPassword").val()});
+                                 jQuery("#profile_loader").css("display","inline");
+                                jQuery("#seoatlGaProfileId").load("<?php bloginfo('wpurl') ?>/wp-content/plugins/seoatl-onsite-ga/php/ga-profile-ajax.php",{'username': jQuery("#seoatlGaUsername").val(),'password': jQuery("#seoatlGaPassword").val()},function(){
+                                    jQuery("#profile_loader").css("display","none");
+                                });
                             })
 
                          

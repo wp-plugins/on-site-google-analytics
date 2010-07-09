@@ -56,3 +56,4 @@ background-position:-32px -16px;
 }
 #onsite-ga-accordion span.ui-icon-triangle-1-s {background-position: -64px -16px}
 #onsite-ga-accordion span.ui-icon {border-right:none;position:absolute;background-repeat:no-repeat;display:block;overflow:hidden;text-indent:-99999px;margin-left:0;}
+#profile_loader {display:none}
