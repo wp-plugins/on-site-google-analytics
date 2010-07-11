@@ -53,7 +53,7 @@ First enter your username and password and then click out of the password box an
 3. This screenshot shows how to configure the plugin
 
 == Upgrade Notice ==
-add section
+add section.
 
 
 == Changelog ==
