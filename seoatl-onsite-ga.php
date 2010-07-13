@@ -477,7 +477,7 @@ if (isset($seoatl_onsite_ga_plugin)) {
     	add_action('wp_head', array(&$seoatl_onsite_ga_plugin, 'addHeaderCode'), 1);
 	add_action('wp_footer', array(&$seoatl_onsite_ga_plugin, 'addFooterCode'), 1);
         add_action('admin_menu', 'SeoatlOnSiteGa_ap');
-        add_action('activate_on-site-google-analytics/seoatl-onsite-ga.php', array(&$seoatl_onsite_ga_plugin, 'init'));
+        add_action('activate_seoatl-onsite-ga/seoatl-onsite-ga.php', array(&$seoatl_onsite_ga_plugin, 'init'));
          
 
         ////Filters
