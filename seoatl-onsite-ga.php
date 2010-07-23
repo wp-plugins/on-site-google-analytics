@@ -48,7 +48,9 @@ if (!class_exists("SeoatlOnSiteGa")) {
                     $seoatlAdminOptions = array('ga_username' => '',
                         'ga_password' => '',
                         'ga_profile_id' => '',
-                        'ga_date_range'=>'month');
+                        'ga_date_range'=>'month',
+                        'author_global'=> 0,
+                        'users'=>array());
 
                     $seoatlOptions = get_option($this->adminOptionsName);
                     if (!empty($seoatlOptions)) {
@@ -64,9 +66,71 @@ if (!class_exists("SeoatlOnSiteGa")) {
 
                 }
 
+                public function getUserLevel($user_level)
+                {
+                    switch($user_level) {
+                        case 10:
+                            return 'admin';
+                            break;
+                        case 7:
+                            return 'publisher';
+                            break;
+                        case 3:
+                            return 'author';
+                            break;
+                        case 2:
+                            return 'editor';
+                            break;
+                        
+
+                    }
+                }
+
+                function checkUserPriviledges()
+                {
+                     global $user_ID;
+                     global $post;
+                     $seoatlOptions = $this->getAdminOptions();
+                     $user_info = get_userdata($user_ID);
+                    
+                    if (is_page()) {
+                        $page = get_page($post->ID);
+                        
+                        $author_id = $page['post_author'];
+                    } else {
+                        $author_id = get_post($post->ID)->post_author;
+                   
+                    }
+                
+                  
+
+                     if ($user_info->user_level==10) {
+                        
+                         return true;
+
+                    } elseif ($seoatlOptions['author_global']==1 && $user_info->user_level>1) {
+                        return true;
+                    } elseif (in_array($user_ID,$seoatlOptions['users'])) {
+                         //check to make sure teh author id and the user id match
+
+                         if ($author_id==$user_ID) {
+                      
+                             return true;
+
+                            
+                         } else {
+                             return false;
+                         }
+
+                     }  else {
+                         return false;
+                     }
+                }
+
 
                 function printAdminPage() {
-
+                    global $wpdb;
+                    
                     $seoatlOptions = $this->getAdminOptions();
 
                     if (isset($_POST['update_seoatlOnSiteGaSettings'])) {
@@ -83,19 +147,31 @@ if (!class_exists("SeoatlOnSiteGa")) {
                           
                         }
 
-                        if (isset($_POST['seoatlGaProfileId'])) {
+                        if (isset($_POST['seoatlGaDateRange'])) {
                             $seoatlOptions['ga_date_range'] = $_POST['seoatlGaDateRange'];
+
+                        }
+                    
+                        if (isset($_POST['seoatlGAUsers'])) {
+                            $seoatlOptions['users'] = $_POST['seoatlGAUsers'];
+
+                        }
+
+                       
+                        if (isset($_POST['seoatlGaAuthorGlobal'])) {
+                            $seoatlOptions['author_global'] = $_POST['seoatlGaAuthorGlobal'];
 
                         }
                     
 
                         update_option($this->adminOptionsName, $seoatlOptions);
+
                        ?>
                         <div class="updated"><p><strong><?php _e("Settings Updated.", "SeoatlOnSiteGa");?></strong></p></div>
 
                      <?php
                     }
-                  
+
                     ?>
                         <div class=wrap>
                         <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
@@ -122,7 +198,42 @@ if (!class_exists("SeoatlOnSiteGa")) {
                             <option <?php if ($seoatlOptions['ga_date_range']=='yesterday') echo "selected" ;?> value="yesterday">Yesterday</option>
                             <option <?php if ($seoatlOptions['ga_date_range']=='month') echo "selected" ;?> value="month">Past Month</option>
                         </select>
-                        <br />
+                        <br /><br />
+
+                        <label for="seoatlGAUsers">Select Users Who Can See Analytics</label><br />
+                        <select multiple size="5" style="width:400px;height:200px;" name="seoatlGAUsers[]">
+                            
+                   
+                       
+<?php
+for ( $i=2;$i<=10;$i++) {
+		$userlevel = $i;
+		$authors = $wpdb->get_results("SELECT * from $wpdb->usermeta WHERE meta_key = 'wp_user_level' AND meta_value = '$userlevel'");
+		foreach ( (array) $authors as $author ) {
+			$author    = get_userdata( $author->user_id );
+			$userlevel = $author->wp2_user_level;
+			$name      = $author->nickname;
+			if ( $show_fullname && ($author->first_name != '' && $author->last_name != '') ) {
+				$name = "$author->first_name $author->last_name";
+			}
+                        if (in_array($author->ID,$seoatlOptions['users'])) {
+                            $selected = 'true';
+                        } else {
+                            $selected =null;
+                        }
+
+			$link = '<option value="'.$author->ID.'" selected="'.$selected.'">' . $name . ' - '.self::getUserLevel($author->user_level).'</option>';
+			echo $link;
+		}
+		
+               
+	}
+?>
+                        </select><br /><br />
+                        <label for="seoatlGaAuthorGlobal">Allow authors to view analytics of other authors posts?</label><br />
+                         <input type="radio" name="seoatlGaAuthorGlobal" value="1" <?php echo (!isset( $seoatlOptions['author_global']) or ($seoatlOptions['author_global']==1)) ? 'checked' : '' ?> />Yes
+                         <input type="radio" name="seoatlGaAuthorGlobal" value="0" <?php echo (isset( $seoatlOptions['author_global']) && ($seoatlOptions['author_global']==0)) ? 'checked' : '' ?> /> No <br />
+
 
 
                         
@@ -159,8 +270,8 @@ if (!class_exists("SeoatlOnSiteGa")) {
                 function loadProfileOptions($username,$password) {
  global $user_ID;
 
-                     $user_info = get_userdata($user_ID);
-                     if ($user_info->user_level!=10) {
+                     
+                     if (!self::checkUserPriviledges()) {
                          return;
                      }
 
@@ -184,8 +295,8 @@ if (!class_exists("SeoatlOnSiteGa")) {
                 function addHeaderCode() {
                            global $user_ID;
 
-                     $user_info = get_userdata($user_ID);
-                     if ($user_info->user_level!=10) {
+                     //$user_info = get_userdata($user_ID);
+                     if (!self::checkUserPriviledges()) {
                          return;
                      }
                      echo '<link type="text/css" rel="stylesheet" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/on-site-google-analytics/css/seoatl-on-site-ga.css" />' . "\n";
@@ -208,9 +319,9 @@ if (!class_exists("SeoatlOnSiteGa")) {
                 function addFooterCode() {
                   
                     global $user_ID;
+                    
                      
-                     $user_info = get_userdata($user_ID);
-                     if ($user_info->user_level!=10) {
+                     if (!self::checkUserPriviledges()) {
                          return;
                      }
 	             $seoatlOptions = $this->getAdminOptions();
@@ -236,8 +347,7 @@ if (!class_exists("SeoatlOnSiteGa")) {
                 function loadData($request_uri) {
                      global $user_ID;
 
-                     $user_info = get_userdata($user_ID);
-                     if ($user_info->user_level!=10) {
+                     if (!self::checkUserPriviledges()) {
                          return;
                      }
               
